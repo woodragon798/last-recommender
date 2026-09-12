@@ -59,7 +59,6 @@ def _research_phase(client, youtube_summary: str) -> str:
         model=GEMINI_MODEL,
         contents=prompt,
         config=types.GenerateContentConfig(
-            tools=[types.Tool(google_search=types.GoogleSearch())],
             max_output_tokens=GEMINI_MAX_TOKENS,
         ),
     )
