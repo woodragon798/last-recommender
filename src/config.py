@@ -50,5 +50,5 @@ CLAUDE_MAX_TOKENS = 4000
 # 주의: 무료 티어 대상 모델명은 Google이 자주 바꾼다.
 # 실행 전 https://aistudio.google.com 의 Rate Limits 화면에서 최신 무료
 # 모델명을 확인하고 필요시 환경변수 GEMINI_MODEL로 덮어쓸 것.
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
 GEMINI_MAX_TOKENS = 4000
