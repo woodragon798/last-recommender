@@ -1,0 +1,46 @@
+name: Daily Business Idea Recommendation
+
+on:
+  schedule:
+    # 매일 08:00 KST = 23:00 UTC (전날)
+    - cron: "0 23 * * *"
+  workflow_dispatch: {}  # 필요할 때 수동 실행 버튼으로도 실행 가능
+
+permissions:
+  contents: write  # history.json / 리포트를 저장소에 커밋하기 위함
+
+jobs:
+  recommend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+
+      - name: 파이썬 설치
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 의존성 설치
+        run: pip install -r requirements.txt
+
+      - name: 파이프라인 실행
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -m src.main
+
+      - name: 결과물을 아티팩트로 업로드
+        uses: actions/upload-artifact@v4
+        with:
+          name: business-recommendation-report
+          path: output_reports/*.docx
+          retention-days: 90
+
+      - name: 리포트 & 이력 저장소에 커밋
+        run: |
+          git config user.name "business-recommender-bot"
+          git config user.email "actions@github.com"
+          git add data/history.json output_reports/*.docx
+          git diff --cached --quiet || git commit -m "chore: 오늘의 사업 아이템 추천 ($(date -u +%Y-%m-%d))"
+          git push
